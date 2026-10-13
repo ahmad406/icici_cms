@@ -178,6 +178,10 @@ class ICICICMSBatch(Document):
 					"Address", address_name, ["address_line1", "address_line2", "city", "pincode"], as_dict=True
 				)
 
+			mobile = pe.get("contact_mobile")
+			if not mobile and pe.get("contact_person"):
+				mobile = frappe.db.get_value("Contact", pe.contact_person, "mobile_no")
+
 			mode = pe.mode_of_payment or ""
 			is_cheque = any(w in mode.upper() for w in ("CHEQUE", "CHECK"))
 
@@ -200,8 +204,8 @@ class ICICICMSBatch(Document):
 				"narration": pe.remarks,
 				"fiscal_year": get_fiscal_year(pe.posting_date, company=pe.company)[0],
 				"company": pe.company,
-				"email": pe.contact_email,
-				"mobile": pe.contact_mobile,
+				"email": pe.get("contact_email"),
+				"mobile": mobile,
 			}
 			line, errs = build_payment_line(payment)
 			if not get_payment_code(mode):
