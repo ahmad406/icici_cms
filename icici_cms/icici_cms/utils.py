@@ -98,3 +98,28 @@ def build_payment_line(data):
 def build_annexure_line(data):
 	data = {**data, "record_id": ANNEXURE_RECORD_ID}
 	return _build(ANNEXURE_FIELDS, data)
+
+
+def build_excel(rows):
+	from io import BytesIO
+
+	from openpyxl import Workbook
+	from openpyxl.styles import Font
+
+	wb = Workbook()
+	pay = wb.active
+	pay.title = "PUSH_Payment"
+	pay.append([f[1] for f in PAYMENT_FIELDS])
+	ann = wb.create_sheet("PUSH_Annexure")
+	ann.append(["Unique Cust Ref No"] + [f[1] for f in ANNEXURE_FIELDS])
+	for ref_no, pay_values, ann_values in rows:
+		pay.append(pay_values)
+		for v in ann_values:
+			ann.append([ref_no] + v)
+	for ws in (pay, ann):
+		for cell in ws[1]:
+			cell.font = Font(bold=True)
+		ws.freeze_panes = "A2"
+	buf = BytesIO()
+	wb.save(buf)
+	return buf.getvalue()

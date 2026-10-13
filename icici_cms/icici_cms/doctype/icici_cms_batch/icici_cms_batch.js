@@ -24,5 +24,8 @@ frappe.ui.form.on("ICICI CMS Batch", {
 		if (frm.doc.docstatus === 1 && frm.doc.generated_file) {
 			frm.add_custom_button(__("Download File"), () => window.open(frm.doc.generated_file));
 		}
+		if (frm.doc.docstatus === 1 && frm.doc.generated_excel) {
+			frm.add_custom_button(__("Download Excel"), () => window.open(frm.doc.generated_excel));
+		}
 	},
 });

@@ -7,6 +7,7 @@ from frappe.utils import flt, getdate
 
 from icici_cms.icici_cms.utils import (
 	build_annexure_line,
+	build_excel,
 	build_payment_line,
 	fmt_amount,
 	fmt_date,
@@ -142,6 +143,18 @@ class ICICICMSBatch(Document):
 		).insert(ignore_permissions=True)
 		self.db_set("generated_file", file.file_url)
 
+		excel = frappe.get_doc(
+			{
+				"doctype": "File",
+				"file_name": self.file_name.rsplit(".", 1)[0] + ".xlsx",
+				"attached_to_doctype": self.doctype,
+				"attached_to_name": self.name,
+				"content": build_excel(self._excel_rows),
+				"is_private": 1,
+			}
+		).insert(ignore_permissions=True)
+		self.db_set("generated_excel", excel.file_url)
+
 	def set_sno_and_file_name(self):
 		last = frappe.db.sql(
 			"""select max(cast(sno as unsigned)) from `tabICICI CMS Batch`
@@ -150,6 +163,12 @@ class ICICICMSBatch(Document):
 			(self.client_code, self.file_date, self.name),
 		)[0][0]
 		self.sno = f"{int(last or 0) + 1:04d}"
+		if self.file_name:
+			name = self.file_name.strip()
+			if "/" in name or "\\" in name:
+				frappe.throw(_("File Name cannot contain / or \\."))
+			self.file_name = name if name.lower().endswith(".txt") else name + ".txt"
+			return
 		day = getdate(self.file_date).strftime("%d%m%Y")
 		self.file_name = f"{self.client_code}_{self.client_code}UPLD_{day}_{self.sno}.txt"
 
@@ -157,6 +176,7 @@ class ICICICMSBatch(Document):
 		from erpnext.accounts.utils import get_fiscal_year
 
 		lines, errors = [], []
+		self._excel_rows = []
 		bank_cache = {}
 
 		def bank(name):
@@ -250,6 +270,7 @@ class ICICICMSBatch(Document):
 				errors.append(f"<b>{pe.name}</b>: " + "; ".join(errs))
 			lines.append(line)
 			lines.extend(annexure)
+			self._excel_rows.append((pe.name, line.split("|"), [a.split("|") for a in annexure]))
 
 		if errors:
 			frappe.throw("<br>".join(errors), title=_("Fix these before submitting"))
