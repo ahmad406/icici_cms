@@ -18,8 +18,7 @@
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company",
-   "reqd": 1,
-   "default": ":Company"
+   "reqd": 1
   },
   {
    "fieldname": "bank_account",
