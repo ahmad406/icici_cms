@@ -1,0 +1,40 @@
+{
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "module": "ICICI CMS",
+ "owner": "Administrator",
+ "creation": "2026-10-13 10:00:00.000000",
+ "modified": "2026-10-13 10:00:00.000000",
+ "modified_by": "Administrator",
+ "links": [],
+ "states": [],
+ "name": "ICICI CMS Settings",
+ "issingle": 1,
+ "fields": [
+  {
+   "fieldname": "client_code",
+   "fieldtype": "Data",
+   "label": "Client Code",
+   "reqd": 1,
+   "description": "Given by ICICI after onboarding. Letters and digits only."
+  }
+ ],
+ "field_order": [
+  "client_code"
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
