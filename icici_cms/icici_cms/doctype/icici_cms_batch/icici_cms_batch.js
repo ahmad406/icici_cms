@@ -18,6 +18,7 @@ frappe.ui.form.on("ICICI CMS Batch", {
 			frm.add_custom_button(__("Get Payment Entries"), () => {
 				frm.call({ doc: frm.doc, method: "get_payment_entries", freeze: true }).then(() =>
 					frm.refresh()
+					frm.dirty()																		 
 				);
 			});
 		}
