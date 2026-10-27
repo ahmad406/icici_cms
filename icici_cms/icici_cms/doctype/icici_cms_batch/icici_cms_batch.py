@@ -273,5 +273,5 @@ class ICICICMSBatch(Document):
 			self._excel_rows.append((pe.name, line.split("|"), [a.split("|") for a in annexure]))
 
 		if errors:
-			frappe.throw("<br>".join(errors), title=_("Fix these before submitting"))
+			frappe.msgprint("<br>".join(errors), title=_("Fix these before submitting"))
 		return "\n".join(lines) + "\n"
