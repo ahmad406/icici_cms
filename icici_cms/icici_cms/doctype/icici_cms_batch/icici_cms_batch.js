@@ -1,7 +1,10 @@
 frappe.ui.form.on("ICICI CMS Batch", {
 	setup(frm) {
 		frm.set_query("bank_account", () => ({
-			filters: { is_company_account: 1, company: frm.doc.company },
+			filters: {
+				is_company_account: 1,
+				company: frm.doc.company,
+			},
 		}));
 	},
 
@@ -16,17 +19,27 @@ frappe.ui.form.on("ICICI CMS Batch", {
 	refresh(frm) {
 		if (frm.doc.docstatus === 0) {
 			frm.add_custom_button(__("Get Payment Entries"), () => {
-				frm.call({ doc: frm.doc, method: "get_payment_entries", freeze: true }).then(() =>
-					frm.refresh()
-					frm.dirty()																		 
-				);
+				frm.call({
+					doc: frm.doc,
+					method: "get_payment_entries",
+					freeze: true,
+				}).then(() => {
+					frm.refresh();
+					frm.dirty();
+				});
 			});
 		}
+
 		if (frm.doc.docstatus === 1 && frm.doc.generated_file) {
-			frm.add_custom_button(__("Download File"), () => window.open(frm.doc.generated_file));
+			frm.add_custom_button(__("Download File"), () => {
+				window.open(frm.doc.generated_file);
+			});
 		}
+
 		if (frm.doc.docstatus === 1 && frm.doc.generated_excel) {
-			frm.add_custom_button(__("Download Excel"), () => window.open(frm.doc.generated_excel));
+			frm.add_custom_button(__("Download Excel"), () => {
+				window.open(frm.doc.generated_excel);
+			});
 		}
 	},
 });
